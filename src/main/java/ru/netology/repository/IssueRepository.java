@@ -25,21 +25,5 @@ public class IssueRepository {
         return null;
     }
 
-    public void openById(int id) {
-        for (Issue issue : issues) {
-            if (issue.getId() == id) {
-                issue.setOpen(true);
-                break;
-            }
-        }
-    }
-    public void closeById(int id){
-        for (Issue issue : issues) {
-            if (issue.getId() == id) {
-                issue.setOpen(false);
-                break;
-            }
-        }
-    }
 }
 

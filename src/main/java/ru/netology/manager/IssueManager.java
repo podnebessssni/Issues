@@ -3,7 +3,9 @@ package ru.netology.manager;
 import ru.netology.domain.Issue;
 import ru.netology.repository.IssueRepository;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class IssueManager {
@@ -13,7 +15,11 @@ public class IssueManager {
         this.repository = repository;
     }
 
-    public List<Issue> filterBy(Predicate<Issue> predicate) {
+    public void add(Issue issue) {
+        repository.save(issue);
+    }
+
+    public List<Issue> filterByAuthor(Predicate<Issue> predicate) {
         List<Issue> result = new ArrayList<>();
         for (Issue issue : repository.getAll()) {
             if (predicate.test(issue)) {
@@ -23,8 +29,27 @@ public class IssueManager {
         return sortByNewest(result);
     }
 
+    public List<Issue> filterByLabel(HashSet<String> label) {
+        List<Issue> result = new ArrayList<>();
+        for (Issue issue : repository.getAll()) {
+            if (issue.getLabel() == label) {
+                result.add(issue);
+            }
+        }
+        return result;
+    }
+    public List<Issue> filterByAssignee(HashSet<String> assignee) {
+        List<Issue> result = new ArrayList<>();
+        for (Issue issue : repository.getAll()) {
+            if (issue.getAssignee() == assignee) {
+                result.add(issue);
+            }
+        }
+        return result;
+    }
+
     public List<Issue> sortByNewest(List<Issue> list){
-        list.sort(Comparator.comparing(Issue::getDate).reversed());
+        list.sort((o1,o2) -> o2.getDate().compareTo(o1.getDate()));
         return list;
     }
 
@@ -47,6 +72,23 @@ public class IssueManager {
             }
         }
         return temp;
+    }
+
+    public void openById(int id) {
+        for (Issue issue : repository.getAll()) {
+            if (issue.getId() == id) {
+                issue.setOpen(true);
+                break;
+            }
+        }
+    }
+    public void closeById(int id){
+        for (Issue issue : repository.getAll()) {
+            if (issue.getId() == id) {
+                issue.setOpen(false);
+                break;
+            }
+        }
     }
 
 }

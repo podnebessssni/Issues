@@ -51,17 +51,4 @@ class IssueRepositoryTest {
 
     assertEquals(expected,actual);
     }
-    @Test
-    void shouldOpenById(){
-
-     repository.openById(2);
-     assertTrue(issue2.isOpen());
-    }
-    @Test
-    void shouldCloseById(){
-
-     repository.closeById(2);
-     assertFalse(issue2.isOpen());
-    }
-
 }
