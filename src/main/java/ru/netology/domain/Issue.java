@@ -17,5 +17,4 @@ public class Issue {
     private String date;
     private HashSet<String> assignee;
     private int commentsCount;
-
 }
