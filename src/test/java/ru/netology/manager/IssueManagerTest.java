@@ -8,6 +8,7 @@ import ru.netology.repository.IssueRepository;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,13 +27,13 @@ class IssueManagerTest {
     private HashSet<String> label3 = new HashSet<>((Arrays.asList("task")));
     private HashSet<String> label4 = new HashSet<>((Arrays.asList("question")));
 
-    private Issue issue1 = new Issue(1,true,"cookie", label1, "10.02.2020", assignee1, 10);
-    private Issue issue2 = new Issue(2,false,"smith", label2, "05.05.2020", assignee2, 0);
-    private Issue issue3 = new Issue(3,true,"charlie", label3, "15.04.2020", assignee3, 3);
-    private Issue issue4 = new Issue(4,true,"charlie", label4, "19.07.2020", assignee1, 0);
+    private Issue issue1 = new Issue(1, true, "cookie", label1, "10.02.2020", assignee1, 10);
+    private Issue issue2 = new Issue(2, false, "smith", label2, "05.05.2020", assignee2, 0);
+    private Issue issue3 = new Issue(3, true, "charlie", label3, "15.04.2020", assignee3, 3);
+    private Issue issue4 = new Issue(4, true, "charlie", label4, "19.07.2020", assignee1, 0);
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         manager.add(issue1);
         manager.add(issue2);
         manager.add(issue3);
@@ -40,66 +41,80 @@ class IssueManagerTest {
     }
 
     @Test
-    void shouldFilterByAuthor(){
-       List<Issue> actual = manager.filterByAuthor(issue -> issue.getAuthor().equals("charlie"));
-       List<Issue> expected = Arrays.asList(issue4,issue3);
-       assertEquals(expected, actual);
-    }
-    @Test
-    void shouldNotFilterByAuthorIfNotExist(){
-       List<Issue> actual = manager.filterByAuthor(issue -> issue.getAuthor().equals("tommy"));
-       List<Issue> expected = Arrays.asList();
-       assertEquals(expected, actual);
-    }
-
-     @Test
-    void shouldFilterByLabel(){
-       List<Issue> actual = manager.filterByLabel(label4);
-       List<Issue> expected = Arrays.asList(issue4);
-       assertEquals(expected, actual);
-         System.out.println(issue4.getLabel());
+    void shouldFilterByAuthor() {
+        String author = "charlie";
+        Predicate<Issue> predicate = issue -> issue.getAuthor().equals(author);
+        List<Issue> actual = manager.filterByAuthor(predicate);
+        List<Issue> expected = Arrays.asList(issue4, issue3);
+        assertEquals(expected, actual);
     }
 
     @Test
-    void shouldNotFilterByLableIfNotExist(){
-       HashSet<String> label5 = new HashSet<>((Arrays.asList("task")));
-       List<Issue> actual = manager.filterByLabel(label5);
-       List<Issue> expected = Arrays.asList();
-       assertEquals(expected, actual);
-    }
-    @Test
-    void shouldFilterByAssignee(){
-       List<Issue> actual = manager.filterByAssignee(assignee1);
-       List<Issue> expected = Arrays.asList(issue1,issue4);
-       assertEquals(expected, actual);
-    }
-    @Test
-    void shouldNotFilterByAssigneeIfNotExist(){
-       List<Issue> actual = manager.filterByAssignee(assignee4);
-       List<Issue> expected = Arrays.asList();
-       assertEquals(expected, actual);
-    }
-    @Test
-    void shouldFindAllOpen(){
-       List<Issue> actual = manager.findAllOpen();
-       List<Issue> expected = Arrays.asList(issue1, issue3, issue4);
-       assertEquals(expected, actual);
-    }
-    @Test
-    void shouldFindAllClosed(){
-       List<Issue> actual = manager.findAllClosed();
-       List<Issue> expected = Arrays.asList(issue2);
-       assertEquals(expected, actual);
+    void shouldNotFilterByAuthorIfNotExist() {
+        String author = "tommy";
+        Predicate<Issue> predicate = issue -> issue.getAuthor().equals(author);
+        List<Issue> actual = manager.filterByAuthor(predicate);
+        List<Issue> expected = Arrays.asList();
+        assertEquals(expected, actual);
     }
 
     @Test
-    void shouldOpenById(){
+    void shouldFilterByLabel() {
+        Predicate<HashSet> equalLabel = t -> t.equals(label4);
+        List<Issue> actual = manager.filterByLabel(equalLabel);
+        List<Issue> expected = Arrays.asList(issue4);
+        assertEquals(expected, actual);
+        System.out.println(issue4.getLabel());
+    }
+
+    @Test
+    void shouldNotFilterByLableIfNotExist() {
+        HashSet<String> label5 = new HashSet<>((Arrays.asList("nottask")));
+        Predicate<HashSet> equalLabel = t -> t.equals(label5);
+        List<Issue> actual = manager.filterByLabel(equalLabel);
+        List<Issue> expected = Arrays.asList();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFilterByAssignee() {
+        Predicate<HashSet> equalAssignee = t -> t.equals(assignee1);
+        List<Issue> actual = manager.filterByAssignee(equalAssignee);
+        List<Issue> expected = Arrays.asList(issue1, issue4);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldNotFilterByAssigneeIfNotExist() {
+        Predicate<HashSet> equalAssignee = t -> t.equals(assignee4);
+        List<Issue> actual = manager.filterByAssignee(equalAssignee);
+        List<Issue> expected = Arrays.asList();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllOpen() {
+        List<Issue> actual = manager.findAllOpen();
+        List<Issue> expected = Arrays.asList(issue1, issue3, issue4);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldFindAllClosed() {
+        List<Issue> actual = manager.findAllClosed();
+        List<Issue> expected = Arrays.asList(issue2);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldOpenById() {
 
         manager.openById(2);
         assertTrue(issue2.isOpen());
     }
+
     @Test
-    void shouldCloseById(){
+    void shouldCloseById() {
 
         manager.closeById(2);
         assertFalse(issue2.isOpen());

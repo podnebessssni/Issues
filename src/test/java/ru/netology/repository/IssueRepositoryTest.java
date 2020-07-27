@@ -24,13 +24,13 @@ class IssueRepositoryTest {
     private HashSet<String> label3 = new HashSet<>((Arrays.asList("task")));
     private HashSet<String> label4 = new HashSet<>((Arrays.asList("question")));
 
-    private Issue issue1 = new Issue(1,true,"cookie", label1, "10.02.2020", assignee1, 10);
-    private Issue issue2 = new Issue(2,false,"smith", label2, "05.05.2020", assignee2, 0);
-    private Issue issue3 = new Issue(3,true,"charlie", label3, "15.04.2020", assignee3, 3);
-    private Issue issue4 = new Issue(4,true,"charlie", label4, "19.07.2020", assignee1, 0);
+    private Issue issue1 = new Issue(1, true, "cookie", label1, "10.02.2020", assignee1, 10);
+    private Issue issue2 = new Issue(2, false, "smith", label2, "05.05.2020", assignee2, 0);
+    private Issue issue3 = new Issue(3, true, "charlie", label3, "15.04.2020", assignee3, 3);
+    private Issue issue4 = new Issue(4, true, "charlie", label4, "19.07.2020", assignee1, 0);
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         repository.save(issue1);
         repository.save(issue2);
         repository.save(issue3);
@@ -38,17 +38,28 @@ class IssueRepositoryTest {
     }
 
     @Test
-    void shouldFindAll(){
-    List<Issue> actual = repository.getAll();
-    List<Issue> expected = Arrays.asList(issue1,issue2,issue3,issue4);
-
-    assertEquals(expected,actual);
+    void shouldFindAll() {
+        List<Issue> actual = repository.getAll();
+        List<Issue> expected = Arrays.asList(issue1, issue2, issue3, issue4);
+        assertEquals(expected, actual);
     }
-    @Test
-    void shouldFindById(){
-    Issue actual = repository.findById(3);
-    Issue expected = issue3;
 
-    assertEquals(expected,actual);
+    @Test
+    void shouldFindById() {
+        Issue actual = repository.findById(3);
+        Issue expected = issue3;
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldOpenById() {
+        repository.openById(2);
+        assertTrue(issue2.isOpen());
+    }
+
+    @Test
+    void shouldCloseById() {
+        repository.closeById(2);
+        assertFalse(issue2.isOpen());
     }
 }
